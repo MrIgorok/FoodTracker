@@ -14,7 +14,7 @@ import java.util.TreeMap;
 public class JdbcUserFoodDao implements UserFoodDao {
     private DataSource dataSource;
 
-    private static String find = "SELECT * FROM Dish WHERE id = ?";
+    private static String find = "SELECT * FROM User_Food_Info WHERE id = ?";
     private static String getDishes = "SELECT date_time, dish_fk FROM User_Food_Info_Dish_Relations WHERE user_food_info_fk = ?";
 
     @Inject

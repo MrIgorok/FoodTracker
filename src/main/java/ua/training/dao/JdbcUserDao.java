@@ -52,7 +52,7 @@ public class JdbcUserDao implements UserDao {
     @Override
     public User create(User user) throws ServiceException {
         try (Connection conn = dataSource.getConnection()) {
-            String create = "INSERT INTO User (name, login, password) VALUES(?, ?, ?)";
+            String create = "INSERT INTO User_t (name, login, password) VALUES(?, ?, ?)";
 
             PreparedStatement preparedStatement = conn.prepareStatement(create, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, user.getName());
@@ -80,7 +80,7 @@ public class JdbcUserDao implements UserDao {
             throw new ServiceException("Wrong user id.");
 
         try (Connection conn = dataSource.getConnection()) {
-            String update = "UPDATE User SET name = ?, login = ?, password = ? WHERE id = ?";
+            String update = "UPDATE User_t SET name = ?, login = ?, password = ? WHERE id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(update);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getLogin());
@@ -97,7 +97,7 @@ public class JdbcUserDao implements UserDao {
     @Override
     public void delete(long id) throws ServiceException {
         try (Connection conn = dataSource.getConnection()) {
-            String deleteById = "DELETE FROM User WHERE id = ?";
+            String deleteById = "DELETE FROM User_t WHERE id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(deleteById);
             preparedStatement.setLong(1, id);
 

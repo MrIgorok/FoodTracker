@@ -10,7 +10,7 @@ public class DataBaseConfiguration {
     private static final BasicDataSource dataSource;
 
     static {
-        ResourceBundle databaseProperties = PropertyResourceBundle.getBundle("database.postgres");
+        ResourceBundle databaseProperties = PropertyResourceBundle.getBundle("database.dbconnection");
         dataSource = new BasicDataSource();
         dataSource.setDriverClassName(databaseProperties.getString("driver"));
         dataSource.setUrl(databaseProperties.getString("url"));

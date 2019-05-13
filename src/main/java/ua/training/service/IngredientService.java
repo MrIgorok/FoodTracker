@@ -7,6 +7,7 @@ public class IngredientService {
     IngredientDao ingredientDao;
 
     public void createIngredient(Ingredient ingredient) {
+
         ingredientDao.create(ingredient);
     }
 
