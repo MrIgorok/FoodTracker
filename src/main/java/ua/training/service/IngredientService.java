@@ -2,30 +2,61 @@ package ua.training.service;
 
 import ua.training.dao.IngredientDao;
 import ua.training.model.food.Ingredient;
+import ua.training.utils.exception.PersistentException;
+import ua.training.utils.exception.ServiceException;
 
 public class IngredientService {
-    IngredientDao ingredientDao;
+    private IngredientDao ingredientDao;
 
-    public void createIngredient(Ingredient ingredient) {
-
-        ingredientDao.create(ingredient);
+    public void createIngredient(Ingredient ingredient) throws ServiceException {
+        // TODO: validate ingredient
+        try {
+            ingredientDao.create(ingredient);
+        } catch (PersistentException e) {
+            // TODO: LOG
+            throw new ServiceException();
+        }
     }
 
-    public void deleteIngredient(Ingredient ingredient) {
-        ingredientDao.delete(ingredient);
+    public void deleteIngredient(Ingredient ingredient) throws ServiceException {
+        // TODO: validate ingredient
+        try {
+            ingredientDao.delete(ingredient.getId());
+        } catch (PersistentException e) {
+            // TODO: LOG
+            throw new ServiceException();
+        }
     }
 
-    public void updateIngredient(Ingredient ingredient) {
-        ingredientDao.update(ingredient);
+    public void updateIngredient(Ingredient ingredient) throws ServiceException {
+        try {
+            ingredientDao.update(ingredient);
+        } catch (PersistentException e) {
+            throw new ServiceException();
+        }
     }
 
-    public Ingredient findIngredientByName(String name) {
-        return ingredientDao.findByName(name);
+    public Ingredient findIngredientByName(String name) throws ServiceException {
+        Ingredient ingredient;
+
+        try {
+            ingredient = ingredientDao.findByName(name);
+        } catch (PersistentException e) {
+            throw new ServiceException();
+        }
+
+        return ingredient;
     }
 
-    public Ingredient findIngredientById(long id) {
-        return ingredientDao.findById(id);
+    public Ingredient findIngredientById(long id) throws ServiceException {
+        Ingredient ingredient;
+
+        try {
+            ingredient = ingredientDao.findById(id);
+        } catch (PersistentException e) {
+            throw new ServiceException();
+        }
+
+        return ingredient;
     }
-
-
 }

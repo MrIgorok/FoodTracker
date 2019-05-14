@@ -2,7 +2,7 @@ package ua.training.dao;
 
 import ua.training.configuration.Inject;
 import ua.training.model.food.*;
-import ua.training.utils.exception.ServiceException;
+import ua.training.utils.exception.PersistentException;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -14,7 +14,7 @@ import java.util.TreeMap;
 public class JdbcUserFoodDao implements UserFoodDao {
     private DataSource dataSource;
 
-    private static String find = "SELECT * FROM User_Food_Info WHERE id = ?";
+    private static String find = "SELECT * FROM Dish WHERE id = ?";
     private static String getDishes = "SELECT date_time, dish_fk FROM User_Food_Info_Dish_Relations WHERE user_food_info_fk = ?";
 
     @Inject
@@ -23,42 +23,74 @@ public class JdbcUserFoodDao implements UserFoodDao {
     }
 
     @Override
-    public UserFoodInfo findById(long id) throws ServiceException {
+    public UserFoodInfo findById(long id) throws PersistentException {
         UserFoodInfo userFoodInfo;
 
         try (Connection conn = dataSource.getConnection()) {
             userFoodInfo = find(conn, id);
         } catch (SQLException e) {
-            throw new ServiceException("UserFoodInfo doesn't exist.", e);
+            throw new PersistentException("UserFoodInfo doesn't exist.", e);
         }
 
         return userFoodInfo;
     }
 
     @Override
-    public UserFoodInfo findByIdInInterval(long id, LocalDateTime fromInclude, LocalDateTime toInclude) throws ServiceException {
+    public UserFoodInfo findByIdInInterval(long id, LocalDateTime fromInclude, LocalDateTime toInclude) throws PersistentException {
         return null;
     }
 
     @Override
-    public UserFoodInfo create(UserFoodInfo userFoodInfo) throws ServiceException {
+    public UserFoodInfo findByUserId(long userId) throws PersistentException {
+        UserFoodInfo userFoodInfo;
+
         try (Connection conn = dataSource.getConnection()) {
-            create(conn, userFoodInfo);
+            long id = findUserFoodInfoIdByUserId(conn, userId);
+            userFoodInfo = find(conn, id);
         } catch (SQLException e) {
-            throw new ServiceException("UserFoodInfo creation error.", e);
+            throw new PersistentException("UserFoodInfo doesn't exist.", e);
+        }
+
+        return userFoodInfo;
+    }
+
+    private long findUserFoodInfoIdByUserId(Connection conn, long id) throws SQLException, PersistentException {
+        String findUserFoodInfoIdByUserId = "SELECT id FROM User_Food_Info WHERE user_fk = ?";
+        long result;
+
+        PreparedStatement preparedStatement = conn.prepareStatement(findUserFoodInfoIdByUserId);
+        preparedStatement.setLong(1, id);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        if (resultSet.next()) {
+            result = resultSet.getLong("id");
+        } else {
+            throw new PersistentException("User doesn't exist.");
+        }
+
+        return result;
+    }
+
+    @Override
+    public UserFoodInfo create(long userId, UserFoodInfo userFoodInfo) throws PersistentException {
+        try (Connection conn = dataSource.getConnection()) {
+            create(conn, userId, userFoodInfo);
+        } catch (SQLException e) {
+            throw new PersistentException("UserFoodInfo creation error.", e);
         }
 
         return userFoodInfo;
     }
 
     @Override
-    public void update(UserFoodInfo userFoodInfo) throws ServiceException {
+    public void update(UserFoodInfo userFoodInfo) throws PersistentException {
         // TODO
     }
 
     //TODO: code duplicated
     @Override
-    public void delete(long id) throws ServiceException {
+    public void delete(long id) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
             String deleteById = "DELETE FROM User_Food_Info WHERE id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(deleteById);
@@ -66,7 +98,7 @@ public class JdbcUserFoodDao implements UserFoodDao {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new ServiceException("User_Food_Info delete error.", e);
+            throw new PersistentException("User_Food_Info delete error.", e);
         }
     }
 
@@ -115,10 +147,12 @@ public class JdbcUserFoodDao implements UserFoodDao {
         return dishTimestamp;
     }
 
-    private static UserFoodInfo create(Connection conn, UserFoodInfo userFoodInfo) throws SQLException {
-        String create = "INSERT INTO User_Food_Info (calories_per_day) VALUES(?)";
+    private static UserFoodInfo create(Connection conn, long userId, UserFoodInfo userFoodInfo) throws SQLException {
+        // TODO: conn.setAutoCommit(off) - transaction
+        String create = "INSERT INTO User_Food_Info (user_fk, calories_per_day) VALUES(?, ?)";
         PreparedStatement preparedStatement = conn.prepareStatement(create, Statement.RETURN_GENERATED_KEYS);
-        preparedStatement.setFloat(1, (float)userFoodInfo.getCaloriesPerDay());
+        preparedStatement.setLong(1, userId);
+        preparedStatement.setFloat(2, (float)userFoodInfo.getCaloriesPerDay());
 
         preparedStatement.executeUpdate();
         ResultSet resultSet = preparedStatement.getGeneratedKeys();

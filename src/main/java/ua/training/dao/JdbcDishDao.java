@@ -5,10 +5,9 @@ import ua.training.model.food.Dish;
 import ua.training.model.food.Ingredient;
 import ua.training.model.food.IngredientWeight;
 import ua.training.model.food.Weight;
-import ua.training.utils.exception.ServiceException;
+import ua.training.utils.exception.PersistentException;
 
 import javax.sql.DataSource;
-import javax.sql.rowset.serial.SerialException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,49 +29,49 @@ public class JdbcDishDao implements DishDao {
     }
 
     @Override
-    public Dish findById(long id) throws ServiceException {
+    public Dish findById(long id) throws PersistentException {
         Dish dish;
 
         try (Connection conn = dataSource.getConnection()) {
             dish = find(conn, id);
         } catch (SQLException e) {
-            throw new ServiceException("Dish id doesn't exist.", e);
+            throw new PersistentException("Dish id doesn't exist.", e);
         }
 
         return dish;
     }
 
     @Override
-    public Dish findByName(String name) throws ServiceException {
+    public Dish findByName(String name) throws PersistentException {
         Dish dish;
 
         try (Connection conn = dataSource.getConnection()) {
             dish = find(conn, name);
         } catch (SQLException e) {
-            throw new ServiceException("Dish name doesn't exist.", e);
+            throw new PersistentException("Dish name doesn't exist.", e);
         }
 
         return dish;
     }
 
     @Override
-    public Dish create(Dish dish) throws ServiceException {
+    public Dish create(Dish dish) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
             dish = create(conn, dish);
         } catch (SQLException e) {
-            throw new ServiceException("Dish creation error.", e);
+            throw new PersistentException("Dish creation error.", e);
         }
 
         return dish;
     }
 
     @Override
-    public void update(Dish dish) throws ServiceException {
+    public void update(Dish dish) throws PersistentException {
         // TODO
     }
 
     @Override
-    public void delete(long id) throws ServiceException {
+    public void delete(long id) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
             String deleteById = "DELETE FROM Dish WHERE id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(deleteById);
@@ -80,7 +79,7 @@ public class JdbcDishDao implements DishDao {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new ServiceException("Dish delete error.", e);
+            throw new PersistentException("Dish delete error.", e);
         }
     }
 

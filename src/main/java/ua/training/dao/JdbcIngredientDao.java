@@ -2,7 +2,7 @@ package ua.training.dao;
 
 import ua.training.configuration.Inject;
 import ua.training.model.food.Ingredient;
-import ua.training.utils.exception.ServiceException;
+import ua.training.utils.exception.PersistentException;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -18,44 +18,44 @@ public class JdbcIngredientDao implements IngredientDao {
     }
 
     @Override
-    public Ingredient findById(long id) throws ServiceException {
+    public Ingredient findById(long id) throws PersistentException {
         Ingredient ingredient;
 
         try (Connection conn = dataSource.getConnection()) {
             ingredient = find(conn, id);
         } catch (SQLException e) {
-            throw new ServiceException("Ingredient id doesn't exist.", e);
+            throw new PersistentException("Ingredient id doesn't exist.", e);
         }
 
         return ingredient;
     }
 
     @Override
-    public Ingredient findByName(String name) throws ServiceException {
+    public Ingredient findByName(String name) throws PersistentException {
         Ingredient ingredient;
 
         try (Connection conn = dataSource.getConnection()) {
             ingredient = find(conn, name);
         } catch (SQLException e) {
-            throw new ServiceException("Ingredient name doesn't exist.", e);
+            throw new PersistentException("Ingredient name doesn't exist.", e);
         }
 
         return ingredient;
     }
 
     @Override
-    public Ingredient create(Ingredient ingredient) throws ServiceException {
+    public Ingredient create(Ingredient ingredient) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
             ingredient = create(conn, ingredient);
         } catch (SQLException e) {
-            throw new ServiceException("Ingredient creation error.", e);
+            throw new PersistentException("Ingredient creation error.", e);
         }
 
         return ingredient;
     }
 
     @Override
-    public void update(Ingredient ingredient) throws ServiceException {
+    public void update(Ingredient ingredient) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
             String update = "UPDATE Ingredient " +
                     "SET kilo_calories_per_100_grams = ?, proteins_per_100_grams = ?, " +
@@ -71,12 +71,12 @@ public class JdbcIngredientDao implements IngredientDao {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new ServiceException("Ingredient update error.", e);
+            throw new PersistentException("Ingredient update error.", e);
         }
     }
 
     @Override
-    public void delete(long id) throws ServiceException {
+    public void delete(long id) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
             String deleteById = "DELETE FROM Ingredient WHERE id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(deleteById);
@@ -84,7 +84,7 @@ public class JdbcIngredientDao implements IngredientDao {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new ServiceException("Ingredient delete error.", e);
+            throw new PersistentException("Ingredient delete error.", e);
         }
     }
 

@@ -2,7 +2,7 @@ package ua.training.dao;
 
 import ua.training.configuration.Inject;
 import ua.training.model.User;
-import ua.training.utils.exception.ServiceException;
+import ua.training.utils.exception.PersistentException;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -16,7 +16,7 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public User findById(long id) throws ServiceException {
+    public User findById(long id) throws PersistentException {
         User user;
 
         try (Connection conn = dataSource.getConnection()) {
@@ -26,14 +26,14 @@ public class JdbcUserDao implements UserDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             user = userMapping(resultSet);
         } catch (SQLException e) {
-            throw new ServiceException("User id doesn't exist.", e);
+            throw new PersistentException("User id doesn't exist.", e);
         }
 
         return user;
     }
 
     @Override
-    public User findByName(String name) throws ServiceException {
+    public User findByName(String name) throws PersistentException {
         User user;
 
         try (Connection conn = dataSource.getConnection()) {
@@ -43,14 +43,14 @@ public class JdbcUserDao implements UserDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             user = userMapping(resultSet);
         } catch (SQLException e) {
-            throw new ServiceException("User name doesn't exist.", e);
+            throw new PersistentException("User name doesn't exist.", e);
         }
 
         return user;
     }
 
     @Override
-    public User create(User user) throws ServiceException {
+    public User create(User user) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
             String create = "INSERT INTO User_t (name, login, password) VALUES(?, ?, ?)";
 
@@ -68,16 +68,16 @@ public class JdbcUserDao implements UserDao {
             }
 
         } catch (SQLException e) {
-            throw new ServiceException("User creation error.", e);
+            throw new PersistentException("User creation error.", e);
         }
 
         return user;
     }
 
     @Override
-    public void update(User user) throws ServiceException {
+    public void update(User user) throws PersistentException {
         if (user.getId() == -1)
-            throw new ServiceException("Wrong user id.");
+            throw new PersistentException("Wrong user id.");
 
         try (Connection conn = dataSource.getConnection()) {
             String update = "UPDATE User_t SET name = ?, login = ?, password = ? WHERE id = ?";
@@ -90,12 +90,12 @@ public class JdbcUserDao implements UserDao {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new ServiceException("User update error.", e);
+            throw new PersistentException("User update error.", e);
         }
     }
 
     @Override
-    public void delete(long id) throws ServiceException {
+    public void delete(long id) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
             String deleteById = "DELETE FROM User_t WHERE id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(deleteById);
@@ -103,7 +103,7 @@ public class JdbcUserDao implements UserDao {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new ServiceException("User delete error.", e);
+            throw new PersistentException("User delete error.", e);
         }
     }
 

@@ -30,7 +30,7 @@ CREATE TABLE User_t (
 
 CREATE TABLE User_Food_Info (
   id  SERIAL PRIMARY KEY,
-  user_fk INT UNIQUE NOT NULL,
+  user_fk INT NOT NULL,
   calories_per_day FLOAT NOT NULL,
   FOREIGN KEY(user_fk) REFERENCES User_t(id) ON DELETE CASCADE
 );
