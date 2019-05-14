@@ -1,6 +1,6 @@
-package ua.training.model;
+package ua.training.model.entity;
 
-import ua.training.model.food.UserFoodInfo;
+import ua.training.model.entity.food.UserFoodInfo;
 
 public class User {
     private long id;

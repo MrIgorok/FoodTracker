@@ -1,6 +1,6 @@
-package ua.training.dao;
+package ua.training.model.dao;
 
-import ua.training.model.food.Dish;
+import ua.training.model.entity.food.Dish;
 import ua.training.utils.exception.PersistentException;
 
 public interface DishDao {

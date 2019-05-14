@@ -1,7 +1,7 @@
-package ua.training.service;
+package ua.training.model.service;
 
-import ua.training.dao.IngredientDao;
-import ua.training.model.food.Ingredient;
+import ua.training.model.dao.IngredientDao;
+import ua.training.model.entity.food.Ingredient;
 import ua.training.utils.exception.PersistentException;
 import ua.training.utils.exception.ServiceException;
 

@@ -1,9 +1,10 @@
-package ua.training.dao;
+package ua.training.model.dao;
 
-import ua.training.configuration.Inject;
-import ua.training.model.food.Ingredient;
+import ua.training.model.entity.food.Ingredient;
+import ua.training.utils.QueriesInitializer;
 import ua.training.utils.exception.PersistentException;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Iterator;
@@ -57,11 +58,7 @@ public class JdbcIngredientDao implements IngredientDao {
     @Override
     public void update(Ingredient ingredient) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
-            String update = "UPDATE Ingredient " +
-                    "SET kilo_calories_per_100_grams = ?, proteins_per_100_grams = ?, " +
-                    "carbohydrates_per_100_grams = ?, fats_per_100_grams = ? " +
-                    "WHERE id = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(update);
+            PreparedStatement preparedStatement = conn.prepareStatement(Queries.update);
             preparedStatement.setDouble(1, ingredient.getKiloCaloriesPer100Grams());
             preparedStatement.setDouble(2, ingredient.getProteinsPer100Grams());
             preparedStatement.setDouble(3, ingredient.getCarbohydratesPer100Grams());
@@ -78,8 +75,7 @@ public class JdbcIngredientDao implements IngredientDao {
     @Override
     public void delete(long id) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
-            String deleteById = "DELETE FROM Ingredient WHERE id = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(deleteById);
+            PreparedStatement preparedStatement = conn.prepareStatement(Queries.deleteById);
             preparedStatement.setLong(1, id);
 
             preparedStatement.executeUpdate();
@@ -101,16 +97,14 @@ public class JdbcIngredientDao implements IngredientDao {
     }
 
     private static PreparedStatement createFindPreparedStatement(Connection conn, String name) throws SQLException {
-        String findByName = "SELECT * FROM Ingredient WHERE name = ?";
-        PreparedStatement preparedStatement = conn.prepareStatement(findByName);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.findByName);
         preparedStatement.setString(1, name);
 
         return preparedStatement;
     }
 
     private static PreparedStatement createFindPreparedStatement(Connection conn, long id) throws SQLException {
-        String findByName = "SELECT * FROM Ingredient WHERE id = ?";
-        PreparedStatement preparedStatement = conn.prepareStatement(findByName);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.findById);
         preparedStatement.setLong(1, id);
 
         return preparedStatement;
@@ -140,10 +134,7 @@ public class JdbcIngredientDao implements IngredientDao {
     }
 
     static Ingredient create(Connection conn, Ingredient ingredient) throws SQLException {
-        String create = "INSERT INTO Ingredient " +
-                "(name, kilo_calories_per_100_grams, proteins_per_100_grams, carbohydrates_per_100_grams, fats_per_100_grams) " +
-                "VALUES(?, ?, ?, ?, ?)";
-        PreparedStatement preparedStatement = conn.prepareStatement(create, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.create, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, ingredient.getName());
         preparedStatement.setDouble(2, ingredient.getKiloCaloriesPer100Grams());
         preparedStatement.setDouble(3, ingredient.getProteinsPer100Grams());
@@ -162,11 +153,7 @@ public class JdbcIngredientDao implements IngredientDao {
     }
 
     static void createAll(Connection conn, List<Ingredient> ingredientList) throws SQLException {
-        String create = "INSERT INTO Ingredient " +
-                "(name, kilo_calories_per_100_grams, proteins_per_100_grams, carbohydrates_per_100_grams, fats_per_100_grams) " +
-                "VALUES(?, ?, ?, ?, ?)";
-
-        PreparedStatement preparedStatement = conn.prepareStatement(create, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.create, Statement.RETURN_GENERATED_KEYS);
 
         for (Ingredient ingredient : ingredientList) {
             preparedStatement.setString(1, ingredient.getName());
@@ -183,6 +170,23 @@ public class JdbcIngredientDao implements IngredientDao {
 
         while (resultSet.next() && itr.hasNext()) {
             ((Ingredient)itr.next()).setId(resultSet.getLong(1));
+        }
+    }
+
+    private static class Queries extends QueriesInitializer {
+        static boolean loaded = false;
+        static String findById;
+        static String findByName;
+        static String create;
+        static String update;
+        static String deleteById;
+
+        protected boolean loaded() {
+            return loaded;
+        }
+
+        protected void setLoad() {
+            loaded = true;
         }
     }
 }

@@ -1,12 +1,13 @@
-package ua.training.dao;
+package ua.training.model.dao;
 
-import ua.training.configuration.Inject;
-import ua.training.model.food.Dish;
-import ua.training.model.food.Ingredient;
-import ua.training.model.food.IngredientWeight;
-import ua.training.model.food.Weight;
+import ua.training.model.entity.food.Dish;
+import ua.training.model.entity.food.Ingredient;
+import ua.training.model.entity.food.IngredientWeight;
+import ua.training.model.entity.food.Weight;
+import ua.training.utils.QueriesInitializer;
 import ua.training.utils.exception.PersistentException;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,14 +15,6 @@ import java.util.List;
 
 public class JdbcDishDao implements DishDao {
     private DataSource dataSource;
-
-    private static String find = "SELECT * FROM Dish WHERE %s = ?";
-    private static String getIngredients = "SELECT Ingredient.id, Ingredient.name, Dish_Ingredient_Relations.ingredient_weight, " +
-            "Ingredient.kilo_calories_per_100_grams, Ingredient.proteins_per_100_grams, " +
-            "Ingredient.carbohydrates_per_100_grams, Ingredient.fats_per_100_grams " +
-            "FROM Dish_Ingredient_Relations RIGHT JOIN Ingredient ON Dish_Ingredient_Relations.ingredient_fk=Ingredient.id " +
-            "WHERE Dish_Ingredient_Relations.dish_fk = ?";
-    private static String update = "UPDATE Dish SET name = ? WHERE id = ?";
 
     @Inject
     public JdbcDishDao(DataSource dataSource) {
@@ -73,8 +66,7 @@ public class JdbcDishDao implements DishDao {
     @Override
     public void delete(long id) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
-            String deleteById = "DELETE FROM Dish WHERE id = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(deleteById);
+            PreparedStatement preparedStatement = conn.prepareStatement(Queries.deleteById);
             preparedStatement.setLong(1, id);
 
             preparedStatement.executeUpdate();
@@ -96,16 +88,14 @@ public class JdbcDishDao implements DishDao {
     }
 
     private static ResultSet executeFindByName(Connection conn, String name) throws SQLException {
-        String findByName = String.format(find, "name");
-        PreparedStatement preparedStatement = conn.prepareStatement(findByName);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.findByName);
         preparedStatement.setString(1, name);
 
         return preparedStatement.executeQuery();
     }
 
     private static ResultSet executeFindById(Connection conn, long id) throws SQLException {
-        String findByName = String.format(find, "id");
-        PreparedStatement preparedStatement = conn.prepareStatement(findByName);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.findByName);
         preparedStatement.setLong(1, id);
 
         return preparedStatement.executeQuery();
@@ -160,8 +150,7 @@ public class JdbcDishDao implements DishDao {
 
     // TODO
     private static Dish create(Connection conn, Dish dish) throws SQLException {
-        String create = "INSERT INTO Dish (name) VALUES(?)";
-        PreparedStatement preparedStatement = conn.prepareStatement(create, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.create, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, dish.getName());
 
         preparedStatement.executeUpdate();
@@ -183,8 +172,7 @@ public class JdbcDishDao implements DishDao {
 
         JdbcIngredientDao.createAll(conn, createdIngredients);
 
-        String createIngredientDishRelation = "INSERT INTO Dish_Ingredient_Relations (dish_fk, ingredient_fk, ingredient_weight) VALUES(?, ?, ?)";
-        preparedStatement = conn.prepareStatement(createIngredientDishRelation);
+        preparedStatement = conn.prepareStatement(Queries.createDishIngredientRelation);
         for (IngredientWeight ingredientWeight : dish.getIngredients()) {
             preparedStatement.setLong(1, dish.getId());
             preparedStatement.setLong(2, ingredientWeight.getIngredient().getId());
@@ -195,5 +183,23 @@ public class JdbcDishDao implements DishDao {
         preparedStatement.executeBatch();
 
         return dish;
+    }
+
+    private static class Queries extends QueriesInitializer {
+        static boolean loaded = false;
+        static String findById;
+        static String findByName;
+        static String create;
+        static String update;
+        static String deleteById;
+        static String createDishIngredientRelation;
+
+        protected boolean loaded() {
+            return loaded;
+        }
+
+        protected void setLoad() {
+            loaded = true;
+        }
     }
 }

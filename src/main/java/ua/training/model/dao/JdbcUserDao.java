@@ -1,9 +1,10 @@
-package ua.training.dao;
+package ua.training.model.dao;
 
-import ua.training.configuration.Inject;
-import ua.training.model.User;
+import ua.training.model.entity.User;
+import ua.training.utils.QueriesInitializer;
 import ua.training.utils.exception.PersistentException;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.*;
 
@@ -20,8 +21,7 @@ public class JdbcUserDao implements UserDao {
         User user;
 
         try (Connection conn = dataSource.getConnection()) {
-            String findById = "SELECT id, name, login FROM User_t WHERE id = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(findById);
+            PreparedStatement preparedStatement = conn.prepareStatement(Queries.findById);
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             user = userMapping(resultSet);
@@ -37,8 +37,7 @@ public class JdbcUserDao implements UserDao {
         User user;
 
         try (Connection conn = dataSource.getConnection()) {
-            String findById = "SELECT id, name, login FROM User_t WHERE name = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(findById);
+            PreparedStatement preparedStatement = conn.prepareStatement(Queries.findByName);
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
             user = userMapping(resultSet);
@@ -52,9 +51,7 @@ public class JdbcUserDao implements UserDao {
     @Override
     public User create(User user) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
-            String create = "INSERT INTO User_t (name, login, password) VALUES(?, ?, ?)";
-
-            PreparedStatement preparedStatement = conn.prepareStatement(create, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement(Queries.create, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getLogin());
             preparedStatement.setString(3, user.getPassword());
@@ -80,8 +77,7 @@ public class JdbcUserDao implements UserDao {
             throw new PersistentException("Wrong user id.");
 
         try (Connection conn = dataSource.getConnection()) {
-            String update = "UPDATE User_t SET name = ?, login = ?, password = ? WHERE id = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(update);
+            PreparedStatement preparedStatement = conn.prepareStatement(Queries.update);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getLogin());
             preparedStatement.setString(3, user.getPassword());
@@ -97,8 +93,7 @@ public class JdbcUserDao implements UserDao {
     @Override
     public void delete(long id) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
-            String deleteById = "DELETE FROM User_t WHERE id = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(deleteById);
+            PreparedStatement preparedStatement = conn.prepareStatement(Queries.deleteById);
             preparedStatement.setLong(1, id);
 
             preparedStatement.executeUpdate();
@@ -122,4 +117,20 @@ public class JdbcUserDao implements UserDao {
         return user;
     }
 
+    private static class Queries extends QueriesInitializer {
+        static boolean loaded = false;
+        static String findById;
+        static String findByName;
+        static String create;
+        static String update;
+        static String deleteById;
+
+        protected boolean loaded() {
+            return loaded;
+        }
+
+        protected void setLoad() {
+            loaded = true;
+        }
+    }
 }

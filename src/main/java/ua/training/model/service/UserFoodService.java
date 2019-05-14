@@ -1,9 +1,9 @@
-package ua.training.service;
+package ua.training.model.service;
 
-import ua.training.dao.UserFoodDao;
-import ua.training.model.User;
-import ua.training.model.food.Dish;
-import ua.training.model.food.UserFoodInfo;
+import ua.training.model.dao.UserFoodDao;
+import ua.training.model.entity.User;
+import ua.training.model.entity.food.Dish;
+import ua.training.model.entity.food.UserFoodInfo;
 import ua.training.utils.exception.PersistentException;
 import ua.training.utils.exception.ServiceException;
 

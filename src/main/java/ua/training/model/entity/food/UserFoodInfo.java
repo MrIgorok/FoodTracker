@@ -1,4 +1,4 @@
-package ua.training.model.food;
+package ua.training.model.entity.food;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

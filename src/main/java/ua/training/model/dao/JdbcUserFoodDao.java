@@ -1,9 +1,10 @@
-package ua.training.dao;
+package ua.training.model.dao;
 
-import ua.training.configuration.Inject;
-import ua.training.model.food.*;
+import ua.training.model.entity.food.*;
+import ua.training.utils.QueriesInitializer;
 import ua.training.utils.exception.PersistentException;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,6 @@ import java.util.TreeMap;
 public class JdbcUserFoodDao implements UserFoodDao {
     private DataSource dataSource;
 
-    private static String find = "SELECT * FROM Dish WHERE id = ?";
     private static String getDishes = "SELECT date_time, dish_fk FROM User_Food_Info_Dish_Relations WHERE user_food_info_fk = ?";
 
     @Inject
@@ -55,10 +55,9 @@ public class JdbcUserFoodDao implements UserFoodDao {
     }
 
     private long findUserFoodInfoIdByUserId(Connection conn, long id) throws SQLException, PersistentException {
-        String findUserFoodInfoIdByUserId = "SELECT id FROM User_Food_Info WHERE user_fk = ?";
         long result;
 
-        PreparedStatement preparedStatement = conn.prepareStatement(findUserFoodInfoIdByUserId);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.findUserFoodInfoIdByUserId);
         preparedStatement.setLong(1, id);
 
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -92,8 +91,7 @@ public class JdbcUserFoodDao implements UserFoodDao {
     @Override
     public void delete(long id) throws PersistentException {
         try (Connection conn = dataSource.getConnection()) {
-            String deleteById = "DELETE FROM User_Food_Info WHERE id = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(deleteById);
+            PreparedStatement preparedStatement = conn.prepareStatement(Queries.deleteById);
             preparedStatement.setLong(1, id);
 
             preparedStatement.executeUpdate();
@@ -105,7 +103,7 @@ public class JdbcUserFoodDao implements UserFoodDao {
     static UserFoodInfo find(Connection conn, long id) throws SQLException {
         UserFoodInfo userFoodInfo;
 
-        PreparedStatement preparedStatement = conn.prepareStatement(find);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.findById);
         preparedStatement.setLong(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -149,8 +147,7 @@ public class JdbcUserFoodDao implements UserFoodDao {
 
     private static UserFoodInfo create(Connection conn, long userId, UserFoodInfo userFoodInfo) throws SQLException {
         // TODO: conn.setAutoCommit(off) - transaction
-        String create = "INSERT INTO User_Food_Info (user_fk, calories_per_day) VALUES(?, ?)";
-        PreparedStatement preparedStatement = conn.prepareStatement(create, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement preparedStatement = conn.prepareStatement(Queries.create, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setLong(1, userId);
         preparedStatement.setFloat(2, (float)userFoodInfo.getCaloriesPerDay());
 
@@ -173,5 +170,21 @@ public class JdbcUserFoodDao implements UserFoodDao {
         preparedStatement.executeBatch();
 
         return userFoodInfo;
+    }
+
+    private static class Queries extends QueriesInitializer {
+        static boolean loaded = false;
+        static String findById;
+        static String findUserFoodInfoIdByUserId;
+        static String deleteById;
+        static String create;
+
+        protected boolean loaded() {
+            return loaded;
+        }
+
+        protected void setLoad() {
+            loaded = true;
+        }
     }
 }

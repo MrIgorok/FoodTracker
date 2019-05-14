@@ -1,6 +1,6 @@
-package ua.training.service;
+package ua.training.model.service;
 
-import ua.training.model.User;
+import ua.training.model.entity.User;
 
 public class UserService {
     public void createUser(User user) {

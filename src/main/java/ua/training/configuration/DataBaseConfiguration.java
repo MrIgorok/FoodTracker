@@ -1,22 +1,23 @@
 package ua.training.configuration;
 
-import org.apache.commons.dbcp2.BasicDataSource;
-
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 
 public class DataBaseConfiguration {
-    private static final BasicDataSource dataSource;
+    private static final DataSource dataSource;
 
     static {
-        ResourceBundle databaseProperties = PropertyResourceBundle.getBundle("database.dbconnection");
-        dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(databaseProperties.getString("driver"));
-        dataSource.setUrl(databaseProperties.getString("url"));
-        dataSource.setUsername(databaseProperties.getString("user"));
-        dataSource.setPassword(databaseProperties.getString("password"));
-        dataSource.addConnectionProperty("ssl", databaseProperties.getString("ssl"));
+        InitialContext context;
+
+        try {
+            context = new InitialContext();
+
+            dataSource = (DataSource)context.lookup("java:/comp/env/jdbc/postgres");
+        } catch (NamingException e) {
+            // TODO: Log
+            throw new RuntimeException(e);
+        }
     }
 
     public DataSource getDataSource() {

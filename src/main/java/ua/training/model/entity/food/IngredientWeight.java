@@ -1,4 +1,4 @@
-package ua.training.model.food;
+package ua.training.model.entity.food;
 
 public class IngredientWeight {
     private Ingredient ingredient;
