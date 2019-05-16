@@ -64,4 +64,10 @@ public class DishService {
         return dish;
     }
 
+//    public double getCalories() {
+//        return ingredients.stream()
+//                .reduce(0.0,
+//                        (accumulate, ingredient) -> accumulate + ingredient.getWeight().getValue(),
+//                        (val1, val2) -> val1 + val2);
+//    }
 }

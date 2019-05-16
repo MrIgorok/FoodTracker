@@ -9,4 +9,6 @@ public interface IngredientDao {
     Ingredient create(Ingredient ingredient) throws PersistentException;
     void update(Ingredient ingredient) throws PersistentException;
     void delete(long id) throws PersistentException;
+
+    boolean contains(String name) throws PersistentException;
 }

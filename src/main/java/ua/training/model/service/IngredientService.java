@@ -5,8 +5,23 @@ import ua.training.model.entity.food.Ingredient;
 import ua.training.utils.exception.PersistentException;
 import ua.training.utils.exception.ServiceException;
 
+import java.util.Objects;
+
 public class IngredientService {
     private IngredientDao ingredientDao;
+
+    public IngredientService(IngredientDao ingredientDao) {
+        this.ingredientDao = ingredientDao;
+    }
+
+    public boolean contains(String name) throws ServiceException {
+        try {
+            ingredientDao.contains(name);
+        } catch (PersistentException e) {
+            // TODO: LOG
+            throw new ServiceException();
+        }
+    }
 
     public void createIngredient(Ingredient ingredient) throws ServiceException {
         // TODO: validate ingredient
@@ -18,10 +33,9 @@ public class IngredientService {
         }
     }
 
-    public void deleteIngredient(Ingredient ingredient) throws ServiceException {
-        // TODO: validate ingredient
+    public void deleteIngredient(Long id) throws ServiceException {
         try {
-            ingredientDao.delete(ingredient.getId());
+            ingredientDao.delete(id);
         } catch (PersistentException e) {
             // TODO: LOG
             throw new ServiceException();

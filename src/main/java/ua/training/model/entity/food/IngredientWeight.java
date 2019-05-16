@@ -2,11 +2,14 @@ package ua.training.model.entity.food;
 
 public class IngredientWeight {
     private Ingredient ingredient;
-    private Weight weight;
+    private long weightGrams;
 
-    public IngredientWeight(Ingredient ingredient, Weight amount) {
+    public IngredientWeight() {
+    }
+
+    public IngredientWeight(Ingredient ingredient, long weightGrams) {
         this.ingredient = ingredient;
-        this.weight = amount;
+        this.weightGrams = weightGrams;
     }
 
     public Ingredient getIngredient() {
@@ -17,11 +20,11 @@ public class IngredientWeight {
         this.ingredient = ingredient;
     }
 
-    public Weight getWeight() {
-        return weight;
+    public long getWeightGrams() {
+        return weightGrams;
     }
 
-    public void setWeight(Weight weight) {
-        this.weight = weight;
+    public void setWeightGrams(long weightGrams) {
+        this.weightGrams = weightGrams;
     }
 }

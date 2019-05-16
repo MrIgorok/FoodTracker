@@ -1,28 +1,28 @@
 package ua.training.model.entity.food;
 
 public class Ingredient {
-    private long id = -1L;
+    private Long id;
     private String name;
-    private double kiloCaloriesPer100Grams;
-    private double proteinsPer100Grams;
-    private double carbohydratesPer100Grams;
-    private double fatsPer100Grams;
+    private int caloriesPer100Grams;
+    private int milliProteinsPer100Grams;
+    private int milliCarbohydratesPer100Grams;
+    private int milliFatsPer100Grams;
 
     public Ingredient() {
 
     }
 
-    public Ingredient(long id, String name, double kiloCaloriesPer100Grams, double proteinsPer100Grams,
-                      double carbohydratesPer100Grams, double fatsPer100Grams) {
+    public Ingredient(long id, String name, int caloriesPer100Grams, int milliProteinsPer100Grams,
+                      int milliCarbohydratesPer100Grams, int milliFatsPer100Grams) {
         this.id = id;
         this.name = name;
-        this.kiloCaloriesPer100Grams = kiloCaloriesPer100Grams;
-        this.proteinsPer100Grams = proteinsPer100Grams;
-        this.carbohydratesPer100Grams = carbohydratesPer100Grams;
-        this.fatsPer100Grams = fatsPer100Grams;
+        this.caloriesPer100Grams = caloriesPer100Grams;
+        this.milliProteinsPer100Grams = milliProteinsPer100Grams;
+        this.milliCarbohydratesPer100Grams = milliCarbohydratesPer100Grams;
+        this.milliFatsPer100Grams = milliFatsPer100Grams;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -38,35 +38,35 @@ public class Ingredient {
         this.name = name;
     }
 
-    public double getKiloCaloriesPer100Grams() {
-        return kiloCaloriesPer100Grams;
+    public int getCaloriesPer100Grams() {
+        return caloriesPer100Grams;
     }
 
-    public void setKiloCaloriesPer100Grams(double kiloCaloriesPer100Grams) {
-        this.kiloCaloriesPer100Grams = kiloCaloriesPer100Grams;
+    public void setCaloriesPer100Grams(int caloriesPer100Grams) {
+        this.caloriesPer100Grams = caloriesPer100Grams;
     }
 
-    public double getProteinsPer100Grams() {
-        return proteinsPer100Grams;
+    public int getMilliProteinsPer100Grams() {
+        return milliProteinsPer100Grams;
     }
 
-    public void setProteinsPer100Grams(double proteinsPer100Grams) {
-        this.proteinsPer100Grams = proteinsPer100Grams;
+    public void setMilliProteinsPer100Grams(int milliProteinsPer100Grams) {
+        this.milliProteinsPer100Grams = milliProteinsPer100Grams;
     }
 
-    public double getCarbohydratesPer100Grams() {
-        return carbohydratesPer100Grams;
+    public int getMilliCarbohydratesPer100Grams() {
+        return milliCarbohydratesPer100Grams;
     }
 
-    public void setCarbohydratesPer100Grams(double carbohydratesPer100Grams) {
-        this.carbohydratesPer100Grams = carbohydratesPer100Grams;
+    public void setMilliCarbohydratesPer100Grams(int milliCarbohydratesPer100Grams) {
+        this.milliCarbohydratesPer100Grams = milliCarbohydratesPer100Grams;
     }
 
-    public double getFatsPer100Grams() {
-        return fatsPer100Grams;
+    public int getMilliFatsPer100Grams() {
+        return milliFatsPer100Grams;
     }
 
-    public void setFatsPer100Grams(double fatsPer100Grams) {
-        this.fatsPer100Grams = fatsPer100Grams;
+    public void setMilliFatsPer100Grams(int milliFatsPer100Grams) {
+        this.milliFatsPer100Grams = milliFatsPer100Grams;
     }
 }

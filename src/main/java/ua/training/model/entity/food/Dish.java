@@ -3,7 +3,7 @@ package ua.training.model.entity.food;
 import java.util.List;
 
 public class Dish {
-    private long id = -1L;
+    private Long id;
     private String name;
     private List<IngredientWeight> ingredients;
 
@@ -17,7 +17,7 @@ public class Dish {
         this.ingredients = ingredients;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -41,10 +41,4 @@ public class Dish {
         this.ingredients = ingredients;
     }
 
-    public double getCalories() {
-        return ingredients.stream()
-                .reduce(0.0,
-                        (accumulate, ingredient) -> accumulate + ingredient.getWeight().getValue(),
-                        (val1, val2) -> val1 + val2);
-    }
 }

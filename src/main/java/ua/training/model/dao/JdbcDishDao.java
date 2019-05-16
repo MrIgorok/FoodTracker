@@ -3,7 +3,6 @@ package ua.training.model.dao;
 import ua.training.model.entity.food.Dish;
 import ua.training.model.entity.food.Ingredient;
 import ua.training.model.entity.food.IngredientWeight;
-import ua.training.model.entity.food.Weight;
 import ua.training.utils.QueriesInitializer;
 import ua.training.utils.exception.PersistentException;
 
@@ -136,9 +135,9 @@ public class JdbcDishDao implements DishDao {
             ingredient.setId(resultSet.getLong("Ingredient.id"));
             ingredient.setName(resultSet.getString("Ingredient.name"));
             ingredient.setKiloCaloriesPer100Grams(resultSet.getDouble("Ingredient.kilo_calories_per_100_grams"));
-            ingredient.setProteinsPer100Grams(resultSet.getDouble("Ingredient.proteins_per_100_grams"));
-            ingredient.setCarbohydratesPer100Grams(resultSet.getDouble("Ingredient.carbohydrates_per_100_grams"));
-            ingredient.setFatsPer100Grams(resultSet.getDouble("Ingredient.fats_per_100_grams"));
+            ingredient.setMilliProteinsPer100Grams(resultSet.getDouble("Ingredient.proteins_per_100_grams"));
+            ingredient.setMilliCarbohydratesPer100Grams(resultSet.getDouble("Ingredient.carbohydrates_per_100_grams"));
+            ingredient.setMilliFatsPer100Grams(resultSet.getDouble("Ingredient.fats_per_100_grams"));
 
             Weight weight = Weight.getWeightByGrams(resultSet.getDouble("Dish_Ingredient_Relations.ingredient_weight"));
 

@@ -60,9 +60,9 @@ public class JdbcIngredientDao implements IngredientDao {
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(Queries.update);
             preparedStatement.setDouble(1, ingredient.getKiloCaloriesPer100Grams());
-            preparedStatement.setDouble(2, ingredient.getProteinsPer100Grams());
-            preparedStatement.setDouble(3, ingredient.getCarbohydratesPer100Grams());
-            preparedStatement.setDouble(4, ingredient.getFatsPer100Grams());
+            preparedStatement.setDouble(2, ingredient.getMilliProteinsPer100Grams());
+            preparedStatement.setDouble(3, ingredient.getMilliCarbohydratesPer100Grams());
+            preparedStatement.setDouble(4, ingredient.getMilliFatsPer100Grams());
             preparedStatement.setLong(5, ingredient.getId());
 
 
@@ -122,9 +122,9 @@ public class JdbcIngredientDao implements IngredientDao {
             ingredient.setId(resultSet.getLong("id"));
             ingredient.setName(resultSet.getString("name"));
             ingredient.setKiloCaloriesPer100Grams(resultSet.getDouble("kilo_calories_per_100_grams"));
-            ingredient.setProteinsPer100Grams(resultSet.getDouble("proteins_per_100_grams"));
-            ingredient.setCarbohydratesPer100Grams(resultSet.getDouble("carbohydrates_per_100_grams"));
-            ingredient.setFatsPer100Grams(resultSet.getDouble("fats_per_100_grams"));
+            ingredient.setMilliProteinsPer100Grams(resultSet.getDouble("proteins_per_100_grams"));
+            ingredient.setMilliCarbohydratesPer100Grams(resultSet.getDouble("carbohydrates_per_100_grams"));
+            ingredient.setMilliFatsPer100Grams(resultSet.getDouble("fats_per_100_grams"));
             // TODO: IngredientValidator.validate(ingredient)
         } else {
             ingredient.setId(-1L);
@@ -137,9 +137,9 @@ public class JdbcIngredientDao implements IngredientDao {
         PreparedStatement preparedStatement = conn.prepareStatement(Queries.create, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, ingredient.getName());
         preparedStatement.setDouble(2, ingredient.getKiloCaloriesPer100Grams());
-        preparedStatement.setDouble(3, ingredient.getProteinsPer100Grams());
-        preparedStatement.setDouble(4, ingredient.getCarbohydratesPer100Grams());
-        preparedStatement.setDouble(5, ingredient.getFatsPer100Grams());
+        preparedStatement.setDouble(3, ingredient.getMilliProteinsPer100Grams());
+        preparedStatement.setDouble(4, ingredient.getMilliCarbohydratesPer100Grams());
+        preparedStatement.setDouble(5, ingredient.getMilliFatsPer100Grams());
 
 
         preparedStatement.executeUpdate();
@@ -158,9 +158,9 @@ public class JdbcIngredientDao implements IngredientDao {
         for (Ingredient ingredient : ingredientList) {
             preparedStatement.setString(1, ingredient.getName());
             preparedStatement.setDouble(2, ingredient.getKiloCaloriesPer100Grams());
-            preparedStatement.setDouble(3, ingredient.getProteinsPer100Grams());
-            preparedStatement.setDouble(4, ingredient.getCarbohydratesPer100Grams());
-            preparedStatement.setDouble(5, ingredient.getFatsPer100Grams());
+            preparedStatement.setDouble(3, ingredient.getMilliProteinsPer100Grams());
+            preparedStatement.setDouble(4, ingredient.getMilliCarbohydratesPer100Grams());
+            preparedStatement.setDouble(5, ingredient.getMilliFatsPer100Grams());
             preparedStatement.addBatch();
         }
 
